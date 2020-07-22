@@ -18,8 +18,8 @@ static_library("skresources") {
     "../../:skia_private",
     "../../:skia_library",
   ]
-  deps = [
-    "../..:skia",
-    "../../experimental/ffmpeg:video_decoder",
-  ]
+  deps = [ "../..:skia" ]
+  if (skia_use_ffmpeg) {
+    deps += [ "experimental/ffmpeg:video_decoder" ]
+  }
 }
