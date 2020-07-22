@@ -10,6 +10,8 @@
 #include "SkColorSpacePriv.h"
 #include "SkPoint3.h"
 
+#include <memory>
+
 bool SkColorSpacePrimaries::toXYZD50(SkMatrix44* toXYZ_D50) const {
     if (!is_zero_to_one(fRX) || !is_zero_to_one(fRY) ||
         !is_zero_to_one(fGX) || !is_zero_to_one(fGY) ||
@@ -192,12 +194,12 @@ static SkColorSpace* singleton_colorspace(SkGammaNamed gamma, const float to_xyz
 }
 
 static SkColorSpace* srgb() {
-    static SkColorSpace* cs = singleton_colorspace(kSRGB_SkGammaNamed, gSRGB_toXYZD50);
-    return cs;
+    static auto cs = std::unique_ptr<SkColorSpace>(singleton_colorspace(kSRGB_SkGammaNamed, gSRGB_toXYZD50));
+    return cs.get();
 }
 static SkColorSpace* srgb_linear() {
-    static SkColorSpace* cs = singleton_colorspace(kLinear_SkGammaNamed, gSRGB_toXYZD50);
-    return cs;
+    static auto cs = std::unique_ptr<SkColorSpace>(singleton_colorspace(kLinear_SkGammaNamed, gSRGB_toXYZD50));
+    return cs.get();
 }
 
 sk_sp<SkColorSpace> SkColorSpace::MakeSRGB() {
