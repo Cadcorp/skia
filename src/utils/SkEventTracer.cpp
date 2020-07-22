@@ -8,8 +8,9 @@
 #include "SkAtomics.h"
 #include "SkEventTracer.h"
 #include "SkOnce.h"
-
+#include "SkMakeUnique.h"
 #include <stdlib.h>
+#include <memory>
 
 class SkDefaultEventTracer : public SkEventTracer {
     SkEventTracer::Handle
@@ -58,7 +59,7 @@ SkEventTracer* SkEventTracer::GetInstance() {
         return tracer;
     }
     static SkOnce once;
-    static SkDefaultEventTracer* defaultTracer;
-    once([] { defaultTracer = new SkDefaultEventTracer; });
-    return defaultTracer;
+    static std::unique_ptr<SkDefaultEventTracer> defaultTracer;
+    once([] { defaultTracer = skstd::make_unique<SkDefaultEventTracer>(); });
+    return defaultTracer.get();
 }
